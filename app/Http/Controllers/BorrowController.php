@@ -37,4 +37,22 @@ class BorrowController extends Controller
             'not borrowed books' => $books['nonReturnable'],
         ]);
     }
+
+    public function reservation(BorrowRequest $request, BorrowService $service){
+        $attributes = $request->validated();
+        $books = $service->reservation($attributes['user_id'], $attributes['books']);
+
+        return response()->json([
+            'status'=> 200,
+            'reserved books' => $books['reserved'],
+        ]);
+    }
+
+    public function deleteReservation(BorrowRequest $request, BorrowService $service){
+        $attributes = $request->validated();
+        $books = $service->deleteReservation( $attributes['user_id'], $attributes['books']);
+        return response()->json([
+            'status'=> 200,
+        ]);
+    }
 }

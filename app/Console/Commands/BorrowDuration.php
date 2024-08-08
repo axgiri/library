@@ -3,9 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Enum\StatusEnum;
+use App\Mail\Notification;
 use App\Repository\BorrowingRepository;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
 
 class BorrowDuration extends Command
 {
@@ -27,7 +29,6 @@ class BorrowDuration extends Command
      * Execute the console command.
      */
 
-     //можно через конструктор сделать иньекцию репы
 
     public function handle(BorrowingRepository $borrowingRepository) 
     {
@@ -46,6 +47,9 @@ class BorrowDuration extends Command
         foreach ($borrowings as $borrowing) {
             $borrowing->status === StatusEnum::OVERDUE;
             $borrowing->save();
+
+            Mail::to($borrowing->user->email)->send(new Notification($borrowing->name));
+            $this->info('notification sent to: ' . $borrowing->user->email);
         }
     }
 }

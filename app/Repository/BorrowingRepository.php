@@ -33,4 +33,12 @@ class BorrowingRepository extends BaseRepository
     public function findBorrowedByUserId($user_id, $book_id){
         return $this->model->where('user_id', $user_id)->where('book_id', $book_id)->where('status', StatusEnum::BORROWED)->first();
     }
+
+    public function isOverDue($user_id){
+        return $this->model->where('user_id', $user_id)->where('status', StatusEnum::OVERDUE)->count();
+    }
+
+    public function deleteReservation($user_id, $book_id){
+        return $this->model->where('user_id', $user_id)->where('book_id', $book_id)->where('status', StatusEnum::RESERVED)->delete();
+    }
 }

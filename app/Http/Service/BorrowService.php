@@ -6,6 +6,7 @@ use App\Enum\StatusEnum;
 use App\Repository\BookRepository;
 use App\Repository\BorrowingRepository;
 use Carbon\Carbon;
+use Illuminate\Validation\Rules\Exists;
 
 class BorrowService
 {
@@ -22,6 +23,7 @@ class BorrowService
     {
         $borrowedBooks = [];
         $unavailableBooks = [];
+        $overDueBooks = [];
         foreach ($books as $book) {
             $borrowed = $this->borrowingRepository->getBorrowedQuantityById($book['book_id']);
             $name = $this->bookRepository->getName($book['book_id']);
@@ -29,12 +31,16 @@ class BorrowService
 
             $sixMoths = Carbon::now()->addMonths(1);
             $returnDate = Carbon::parse($book['return_date']);
-            
             if ($returnDate->greaterThan($sixMoths)) {
                 $unavailableBooks[] = "sorry, $name can not be borrowed for more than 6 moth";
             } elseif ($borrowed >= $quantity) {
-                $unavailableBooks[] = "sorry, $name is not available now";
-            } else {
+                $unavailableBooks[] = "sorry, $name is not available now. but you got reservation";
+                $this->reservation($user_id, $books);
+            } elseif($this->borrowingRepository->getByStatus($user_id) >= 1) {
+                $overDueBooks[] = "please, return other books";
+            }
+            
+            else {
                 $borrowedBook = $this->borrowingRepository->create([
                     'user_id' => $user_id,
                     'book_id' => $book['book_id'],
@@ -46,7 +52,8 @@ class BorrowService
         }
         return [
             'borrowed' => $borrowedBooks,
-            'unavailable' => $unavailableBooks
+            'unavailable' => $unavailableBooks,
+            'overdue' => $overDueBooks,
         ];
     }
 
@@ -77,5 +84,28 @@ class BorrowService
             'returned' => $returnedBooks,
             'nonReturnable'=> $nonReturnable
         ];
+    }
+
+    public function reservation($user_id, $books) {
+        $reservedBooks = [];
+        foreach ($books as $book) {
+            $reserved = $this->borrowingRepository->create([
+                'user_id' => $user_id,
+                'book_id' => $book['book_id'],
+                'return_date' => $book['return_date'],
+                'status' => StatusEnum::RESERVED,
+            ]);
+            $reservedBooks[] = [$reserved];
+        }
+        return [
+            'reserved' => $reservedBooks,
+        ];
+    }
+
+    public function deleteReservation($user_id, $books) {
+        foreach ($books as $book) {
+            $this->borrowingRepository->deleteReservation($user_id, $book['book_id']);
+        }
+        return;
     }
 }
