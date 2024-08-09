@@ -50,7 +50,7 @@ class BorrowController extends Controller
 
     public function deleteReservation(BorrowRequest $request, BorrowService $service){
         $attributes = $request->validated();
-        $books = $service->deleteReservation($attributes['user_id'], $attributes['books']);
+        $service->deleteReservation($attributes['user_id'], $attributes['books']);
         return response()->json([
             'status'=> 'success',
         ]);
