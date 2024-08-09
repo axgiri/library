@@ -24,7 +24,7 @@ class BorrowingFactory extends Factory
         return [
             'user_id' => User::factory(),
             'book_id' => Book::factory(),
-            'return_date' => $this->faker->dateTimeBetween('now', '+1 year'),
+            'return_date' => $this->faker->date('now'),
             'status' => $this->faker->randomElement(['borrowed', 'returned']),
         ];
     }

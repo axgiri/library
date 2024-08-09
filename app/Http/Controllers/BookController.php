@@ -8,9 +8,10 @@ use App\Http\Service\BookService;
 // it is a resource controller
 class BookController extends Controller
 {
-    public function index()
+    public function index(BookService $bookService)
     {
-        //
+        $books = $bookService->getAllBooks();
+        return response()->json(['books' => $books]);
     }
 
     public function store(BookRequest $request, BookService $bookService)

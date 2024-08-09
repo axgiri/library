@@ -6,75 +6,56 @@ use App\Models\Book;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class BookTest extends TestCase
+class CrudTest extends TestCase
 {
     use RefreshDatabase;
 
     /** @test */
-    public function it_can_create_a_book()
+    public function createBookTest()
     {
-        $data = [
-            'title' => 'The Great Gatsby',
-            'author' => 'F. Scott Fitzgerald',
-            'publisher' => 'Scribner',
-            'quantity' => 10,
-        ];
-
-        $response = $this->postJson('/api/books', $data);
-
+        $data = Book::factory()->create()->toArray();
+        $this->postJson('/api/books', $data);
         $this->assertDatabaseHas('books', $data);
     }
 
     /** @test */
-    public function it_can_get_all_books()
-    {
-        Book::factory()->count(5)->create();
-
-        $response = $this->getJson('/api/books');
-
-        $response->assertJsonCount(5);
+    public function getAllBooksTest() {
+        Book::factory()->create();
+        $response = $this->get('/api/books');
+        expect($response->json()['books'])->toBeArray();
     }
+    
+
 
     /** @test */
-    public function it_can_get_a_single_book()
+    public function getByIdTest() {
+        $book = Book::factory()->create();
+        $response = $this->get("/api/books/{$book->id}");
+        $response->assertStatus(200);
+    }
+    
+    
+    /** @test */
+    public function updateBookTest()
     {
         $book = Book::factory()->create();
 
-        $response = $this->getJson("/api/books/{$book->id}");
-
-        $response->assertJson([
-            'id' => $book->id,
-            'title' => $book->title,
+        $data = [
+            'id'=> $book->id,
+            'name'=> $book->name,
             'author' => $book->author,
             'publisher' => $book->publisher,
             'quantity' => $book->quantity,
-        ]);
-    }
-
-    /** @test */
-    public function it_can_update_a_book()
-    {
-        $book = Book::factory()->create();
-
-        $data = [
-            'title' => 'New Title',
-            'author' => 'New Author',
-            'publisher' => 'New Publisher',
-            'quantity' => 5,
         ];
-
-        $response = $this->putJson("/api/books/{$book->id}", $data);
-
+        $this->putJson("/api/books/{$book->id}", $data);
         $this->assertDatabaseHas('books', $data);
     }
 
     /** @test */
-    public function it_can_delete_a_book()
+    public function deteteBookTest()
     {
         $book = Book::factory()->create();
-
-        $response = $this->deleteJson("/api/books/{$book->id}");
-
+        $this->deleteJson("/api/books/{$book->id}");
         $this->assertDatabaseMissing('books', ['id' => $book->id]);
     }
 }

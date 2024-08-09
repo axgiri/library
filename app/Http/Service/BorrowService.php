@@ -36,7 +36,7 @@ class BorrowService
             } elseif ($borrowed >= $quantity) {
                 $unavailableBooks[] = "sorry, $name is not available now. but you got reservation";
                 $this->reservation($user_id, $books);
-            } elseif($this->borrowingRepository->getByStatus($user_id) >= 1) {
+            } elseif($this->borrowingRepository->isOverDue($user_id) >= 1) {
                 $overDueBooks[] = "please, return other books";
             }
             

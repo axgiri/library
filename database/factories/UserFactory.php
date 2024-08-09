@@ -29,7 +29,7 @@ class UserFactory extends Factory
         return [
             'id' => $this->faker->unique()->randomNumber(),
             'email' => fake()->unique()->safeEmail(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => Hash::make('password'),
         ];
     }
 
