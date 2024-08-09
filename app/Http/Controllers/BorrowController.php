@@ -13,9 +13,9 @@ class BorrowController extends Controller
         $books = $service->borrow($attributes['user_id'], $attributes['books']);
 
         return response()->json([
-            'status' => 200,
-            'borrowed books' => $books['borrowed'],
-            'unavailable books' => $books['unavailable'],
+            'status' => 'success',
+            'borrowed_books' => $books['borrowed'],
+            'unavailable_books' => $books['unavailable'],
         ]);
     }
 
@@ -23,8 +23,8 @@ class BorrowController extends Controller
     {
         $books = $service->getBooksByUserId($user_id);
         return response()->json([
-            'status' => 200,
-            'data' => [$books]
+            'status' => 'success',
+            'data' => $books
         ]);
     }
 
@@ -32,9 +32,9 @@ class BorrowController extends Controller
         $attributes = $request->validated();
         $books = $service->returnBooks( $attributes['user_id'], $attributes['books']);
         return response()->json([
-            'status'=> 200,
-            'returned books' => $books['returned'],
-            'not borrowed books' => $books['nonReturnable'],
+            'status'=> 'success',
+            'returned_books' => $books['returned'],
+            'not borrowed_books' => $books['nonReturnable'],
         ]);
     }
 
@@ -43,16 +43,16 @@ class BorrowController extends Controller
         $books = $service->reservation($attributes['user_id'], $attributes['books']);
 
         return response()->json([
-            'status'=> 200,
+            'status'=> 'success',
             'reserved books' => $books['reserved'],
         ]);
     }
 
     public function deleteReservation(BorrowRequest $request, BorrowService $service){
         $attributes = $request->validated();
-        $books = $service->deleteReservation( $attributes['user_id'], $attributes['books']);
+        $books = $service->deleteReservation($attributes['user_id'], $attributes['books']);
         return response()->json([
-            'status'=> 200,
+            'status'=> 'success',
         ]);
     }
 }

@@ -14,7 +14,7 @@ class BorrowRequest extends FormRequest {
             'user_id' => 'required|exists:users,id',
             'books' => 'required|array',
             'books.*.book_id' => 'required|exists:books,id',
-            'books.*.return_date' => 'sometimes|string'
+            'books.*.return_date' => 'sometimes|date'
         ];
     }
 }

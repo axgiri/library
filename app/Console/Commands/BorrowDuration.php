@@ -32,9 +32,8 @@ class BorrowDuration extends Command
 
     public function handle(BorrowingRepository $borrowingRepository) 
     {
-        $dates = $borrowingRepository->getByStatus(StatusEnum::BORROWED);
+        $dates = $borrowingRepository->getByStatusAndTodaysDate(StatusEnum::BORROWED, Carbon::now());
         foreach ($dates as $date) {
-            #$date = Carbon::parse($date);  
             if(Carbon::now()->equalTo($date)){
                 $this->notReturned($borrowingRepository,$date);
             }

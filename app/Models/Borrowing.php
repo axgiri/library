@@ -18,7 +18,6 @@ class Borrowing extends Model
     ];
     
     public $incrementing = false;
-    protected $primatyKey = ['user_id','book_id'];
 
 
     public function book(): BelongsTo

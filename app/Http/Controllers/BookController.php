@@ -20,8 +20,8 @@ class BookController extends Controller
         $bookService->create($attributes);
 
         return response()->json([
-            'status' => 200,
-            'data' => [$attributes]
+            'status' => 'success',
+            'data' => $attributes
         ]);
     }
 
@@ -29,7 +29,7 @@ class BookController extends Controller
     {
         $bookService->getAllBooks();
         return response()->json([
-            'status' => 200,
+            'status' => 'success',
         ]);
     }
 
@@ -38,8 +38,8 @@ class BookController extends Controller
         $attributes = $request->validated();
         $bookService->update($id, $attributes);
         return response()->json([
-            'status' => 200,
-            'data' => [$attributes],
+            'status' => 'success',
+            'data' => $attributes,
         ]);
     }
 
@@ -52,7 +52,7 @@ class BookController extends Controller
     {
         $bookService->delete($id);
         return response()->json([
-            'status' => 200,
+            'status' => 'success',
         ]);
     }
 }

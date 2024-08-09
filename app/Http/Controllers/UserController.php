@@ -8,18 +8,22 @@ use App\Http\Service\UserService;
 class UserController extends Controller
 {
     protected $userService;
-    public function __construct(UserService $userService){
+
+    public function __construct(UserService $userService)
+    {
         $this->userService = $userService;
     }
-    public function store(UserRequest $request){
+
+    public function store(UserRequest $request)
+    {
         $attributes = $request->validated();
 
-        $attributes['password']=base64_encode($attributes['password']);
+        $attributes['password'] = bcrypt($attributes['password']);
         $this->userService->create($attributes);
 
         return response()->json([
-            'status' => '200',
+            'status' => 'success',
             'data' => $attributes
-    ]);
+        ]);
     }
 }

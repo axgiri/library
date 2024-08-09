@@ -18,8 +18,8 @@ class BorrowingRepository extends BaseRepository
         return $this->model->where('user_id', $user_id)->with('book')->get();
     }
 
-    public function getByStatus($status){
-        return $this->model->where('status', $status)->get('created_at');
+    public function getByStatusAndTodaysDate($status, $date){
+        return $this->model->where('status', $status)->where('return_date', $date)->get();
     }
 
     public function getByDate($date){
